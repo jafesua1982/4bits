@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title><span th:text="#{persona.buscar.titulo}"></span></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+    <div class="starter-template">
+        <h1><span th:text="#{empresa}" /></h1>
+        <h2><span th:text="#{persona.buscar.titulo}"></span></h2>
+    </div>
+
+    <form th:action="@{/personasBuscar}" th:object="${formBean}" method="post">
+        <p th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
+        <table border="1" style="align-self: center;">
+            <tr>
+                <td><label th:text="#{persona.nombre}" /></td>
+                <td><input type="text" th:field="*{nombre}" /></td>
+            </tr>
+            <tr>
+                <td><label th:text="#{persona.dniCuit}" /></td>
+                <td><input type="text" th:field="*{dniCuit}" /></td>
+            </tr>
+        </table>
+
+        <table class="botones">
+            <tr>
+                <td><button type="submit" name="action" value="Buscar" th:text="#{botones.buscar}"/></td>
+                <td><button type="submit" name="action" value="Cancelar" th:text="#{botones.cancelar}"/></td>
+                <td><button type="submit" name="action" value="Registrar" th:text="#{botones.registrar}"/></td>
+            </tr>
+        </table>
+
+        <table class="resultados" border="0" style="align-self: center;">
+            <thead>
+                <tr>
+                    <th><label th:text="#{persona.apellido}" /></th>
+                    <th><label th:text="#{persona.nombre}" /></th>
+                    <th><label th:text="#{persona.dniCuit}" /></th>
+                    <th><label th:text="#{persona.telefono}" /></th>
+                    <th><label th:text="#{persona.email}" /></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${resultados}">
+                    <td th:text="${p.apellido}"></td>
+                    <td th:text="${p.nombre}"></td>
+                    <td th:text="${p.dniCuit}"></td>
+                    <td th:text="${p.telefono}"></td>
+                    <td th:text="${p.email}"></td>
+                    <td>
+                        <a th:href="@{/personasEditar/{id}(id=${p.id})}"
+                           class="btn btn-primary"
+                           th:text="#{links.editar}">
+                        </a>
+                    </td>
+                    <td>
+                        <button type="submit"
+                                th:formaction="@{/personasEditar/delete/{id}(id=${p.id})}"
+                                formmethod="post"
+                                class="btn btn-primary"
+                                th:text="#{links.eliminar}"
+                                onclick="return confirm('¿Estás seguro?');">
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
