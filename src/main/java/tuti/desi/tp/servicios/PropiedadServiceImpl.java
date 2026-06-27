@@ -3,7 +3,9 @@ package tuti.desi.tp.servicios;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tuti.desi.tp.accesoDatos.IHistorialEstadoPropiedadRepo;
 import tuti.desi.tp.accesoDatos.IPropiedadRepo;
+import tuti.desi.tp.entidades.HistorialEstadoPropiedad;
 import tuti.desi.tp.entidades.Propiedad;
 import tuti.desi.tp.entidades.enums.EstadoDisponibilidad;
 import tuti.desi.tp.excepciones.EntidadNoEncontradaException;
@@ -15,6 +17,10 @@ public class PropiedadServiceImpl implements PropiedadService {
 
 	@Autowired
 	IPropiedadRepo repo;
+
+	@Autowired
+	IHistorialEstadoPropiedadRepo historialRepo;
+
 
 	@Override
 	public List<Propiedad> getAll() {
@@ -42,16 +48,22 @@ public class PropiedadServiceImpl implements PropiedadService {
 		if (p.getId() == null) {
 			if (repo.existsByDireccionIgnoreCaseAndCiudadId(p.getDireccion(), p.getCiudad().getId()))
 				throw new Excepcion("Ya existe una propiedad con esa dirección en la misma ciudad", "direccion");
-			
+
 			if (p.getEstadoDisponibilidad() == null)
 				p.setEstadoDisponibilidad(EstadoDisponibilidad.DISPONIBLE);
-			
+
 			repo.save(p);
+			historialRepo.save(new HistorialEstadoPropiedad(p, p.getEstadoDisponibilidad()));
+
 		} else {
 			if (repo.existeOtraConMismaDireccion(p.getDireccion(), p.getCiudad().getId(), p.getId()))
 				throw new Excepcion("Existe otra propiedad con esa dirección en la misma ciudad", "direccion");
-			
+
+			Propiedad existente = getById(p.getId());
 			repo.save(p);
+
+			if (!existente.getEstadoDisponibilidad().equals(p.getEstadoDisponibilidad()))
+				historialRepo.save(new HistorialEstadoPropiedad(p, p.getEstadoDisponibilidad()));
 		}
 	}
 
@@ -59,7 +71,7 @@ public class PropiedadServiceImpl implements PropiedadService {
 	public void deleteById(Long id) {
 		if (!repo.existsById(id))
 			throw new EntidadNoEncontradaException("la propiedad", id);
-		
+
 		repo.deleteById(id);
 	}
 }
