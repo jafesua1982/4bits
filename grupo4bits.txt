@@ -1,0 +1,17 @@
+GRUPO: 4bits
+MATERIA: Desarrollo de Sistemas de Información (DESI) - 2026
+UTN - Facultad Regional Santa Fe
+
+Trabajo Practico (3ra parte)
+
+INTEGRANTES:
+
+1. Suárez, Javier - jafesuachu@gmail.com
+    Epic 1 - ABMC Propiedades
+   
+
+2. Castillejo, Jesús - Yesua.jesus@gmail.com
+    Epic 2 - ABMC Publicaciones
+   
+
+REPOSITORIO: https://github.com/jafesua1982/4bits
