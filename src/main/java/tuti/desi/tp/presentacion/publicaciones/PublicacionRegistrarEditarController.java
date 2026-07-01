@@ -22,7 +22,7 @@ import tuti.desi.tp.presentacion.propiedades.PropiedadesBuscarForm;
 
 @Controller
 @RequestMapping("/publicacionEditar")
-public class PublicacionesRegistrarEditarController {
+public class PublicacionRegistrarEditarController {
 
 	@Autowired
 	private PublicacionService servicioPublicaciones;

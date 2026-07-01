@@ -1,80 +1,107 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title><span th:text="#{publicacion.editar.titulo}"/></title>
+    <title><span th:text="#{publicacion.buscar.titulo}"></span></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
 <body>
     <div class="starter-template">
         <h1><span th:text="#{empresa}" /></h1>
-        <h2 th:text="${formBean.id} ? #{publicacion.editar.titulo} : #{publicacion.registrar.titulo}" />
+        <h2><span th:text="#{publicacion.buscar.titulo}"></span></h2>
     </div>
 
-    <form th:action="@{/publicacionEditar}" th:object="${formBean}" method="post">
+    <form th:action="@{/publicacionesBuscar}" th:object="${formBean}" method="post">
         <p th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
-        <input type="hidden" th:field="*{id}">
-
-        <table border="0" style="align-self: center;">
+        <table border="1" style="align-self: center;">
             <tr>
                 <td><label th:text="#{publicacion.propiedad}" /></td>
                 <td>
-                    <select th:if="${formBean.id == null}" th:field="*{idPropiedad}">
-                        <option value="">Seleccionar propiedad disponible...</option>
-                        <option th:each="p : ${propiedadesDisponibles}"
+                    <select th:field="*{idPropiedad}">
+                        <option value="">Todas</option>
+                        <option th:each="p : ${allPropiedades}"
                                 th:value="${p.id}"
                                 th:text="${p.direccion + ' - ' + p.ciudad?.nombre}"></option>
                     </select>
-                    <span th:if="${formBean.id != null}">
-                        <input type="hidden" th:field="*{idPropiedad}" />
-                        <span th:each="p : ${allPropiedades}"
-                              th:if="${p.id == formBean.idPropiedad}"
-                              th:text="${p.direccion + ' - ' + p.ciudad?.nombre}"></span>
-                        <em> (no se puede modificar)</em>
-                    </span>
                 </td>
-                <td><p th:if="${#fields.hasErrors('idPropiedad')}" th:errorclass="error" th:errors="*{idPropiedad}" /></td>
             </tr>
             <tr>
-                <td><label th:text="#{publicacion.precio}" /></td>
-                <td><input type="number" th:field="*{precioMensual}" min="0.01" step="0.01" /></td>
-                <td><p th:if="${#fields.hasErrors('precioMensual')}" th:errorclass="error" th:errors="*{precioMensual}" /></td>
-            </tr>
-            <tr>
-                <td><label th:text="#{publicacion.fecha}" /></td>
-                <td><input type="date" th:field="*{fechaPublicacion}" /></td>
-                <td><p th:if="${#fields.hasErrors('fechaPublicacion')}" th:errorclass="error" th:errors="*{fechaPublicacion}" /></td>
+                <td><label th:text="#{propiedad.ciudad}" /></td>
+                <td>
+                    <select th:field="*{idCiudad}">
+                        <option value="">Todas</option>
+                        <option th:each="c : ${allCiudades}"
+                                th:value="${c.id}"
+                                th:text="${c.nombre}"></option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <td><label th:text="#{publicacion.estado}" /></td>
                 <td>
                     <select th:field="*{estado}">
+                        <option value="">Todos</option>
                         <option th:each="e : ${allEstados}"
                                 th:value="${e}"
                                 th:text="${e}"></option>
                     </select>
                 </td>
-                <td><p th:if="${#fields.hasErrors('estado')}" th:errorclass="error" th:errors="*{estado}" /></td>
             </tr>
             <tr>
-                <td><label th:text="#{publicacion.condiciones}" /></td>
-                <td><textarea th:field="*{condiciones}" rows="3" cols="40"></textarea></td>
-                <td><p th:if="${#fields.hasErrors('condiciones')}" th:errorclass="error" th:errors="*{condiciones}" /></td>
+                <td>Precio minimo</td>
+                <td><input type="number" th:field="*{precioMin}" min="0" step="0.01" /></td>
             </tr>
             <tr>
-                <td><label th:text="#{publicacion.descripcion}" /></td>
-                <td><textarea th:field="*{descripcion}" rows="4" cols="40"></textarea></td>
-                <td><p th:if="${#fields.hasErrors('descripcion')}" th:errorclass="error" th:errors="*{descripcion}" /></td>
+                <td>Precio maximo</td>
+                <td><input type="number" th:field="*{precioMax}" min="0" step="0.01" /></td>
             </tr>
         </table>
 
         <table class="botones">
             <tr>
-                <td><button type="submit" name="action" value="actionAceptar" th:text="#{botones.aceptar}"/></td>
+                <td><button type="submit" name="action" value="actionBuscar" th:text="#{botones.buscar}"/></td>
                 <td><button type="submit" name="action" value="actionCancelar" th:text="#{botones.cancelar}"/></td>
+                <td><button type="submit" name="action" value="actionRegistrar" th:text="#{botones.registrar}"/></td>
             </tr>
+        </table>
+
+        <table class="resultados" border="0" style="align-self: center;">
+            <thead>
+                <tr>
+                    <th><label th:text="#{publicacion.propiedad}" /></th>
+                    <th><label th:text="#{propiedad.ciudad}" /></th>
+                    <th><label th:text="#{publicacion.precio}" /></th>
+                    <th><label th:text="#{publicacion.fecha}" /></th>
+                    <th><label th:text="#{publicacion.estado}" /></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="pub : ${resultados}">
+                    <td th:text="${pub.propiedad?.direccion}"></td>
+                    <td th:text="${pub.propiedad?.ciudad?.nombre}"></td>
+                    <td th:text="${pub.precioMensual}"></td>
+                    <td th:text="${pub.fechaPublicacion}"></td>
+                    <td th:text="${pub.estado}"></td>
+                    <td>
+                        <a th:href="@{/publicacionEditar/{id}(id=${pub.id})}"
+                           class="btn btn-primary"
+                           th:text="#{links.editar}">
+                        </a>
+                    </td>
+                    <td>
+                        <button type="submit"
+                                th:formaction="@{/publicacionEditar/delete/{id}(id=${pub.id})}"
+                                formmethod="post"
+                                class="btn btn-primary"
+                                th:text="#{links.eliminar}"
+                                onclick="return confirm('Estas seguro?');">
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </form>
 </body>
 </html>
-
