@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title><span th:text="#{publicacion.editar.titulo}"/></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+    <div class="starter-template">
+        <h1><span th:text="#{empresa}" /></h1>
+        <h2 th:text="${formBean.id} ? #{publicacion.editar.titulo} : #{publicacion.registrar.titulo}" />
+    </div>
+
+    <form th:action="@{/publicacionEditar}" th:object="${formBean}" method="post">
+        <p th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
+        <input type="hidden" th:field="*{id}">
+
+        <table border="0" style="align-self: center;">
+            <tr>
+                <td><label th:text="#{publicacion.propiedad}" /></td>
+                <td>
+                    <select th:if="${formBean.id == null}" th:field="*{idPropiedad}">
+                        <option value="">Seleccionar propiedad disponible...</option>
+                        <option th:each="p : ${propiedadesDisponibles}"
+                                th:value="${p.id}"
+                                th:text="${p.direccion + ' - ' + p.ciudad?.nombre}"></option>
+                    </select>
+                    <span th:if="${formBean.id != null}">
+                        <input type="hidden" th:field="*{idPropiedad}" />
+                        <span th:each="p : ${allPropiedades}"
+                              th:if="${p.id == formBean.idPropiedad}"
+                              th:text="${p.direccion + ' - ' + p.ciudad?.nombre}"></span>
+                        <em> (no se puede modificar)</em>
+                    </span>
+                </td>
+                <td><p th:if="${#fields.hasErrors('idPropiedad')}" th:errorclass="error" th:errors="*{idPropiedad}" /></td>
+            </tr>
+            <tr>
+                <td><label th:text="#{publicacion.precio}" /></td>
+                <td><input type="number" th:field="*{precioMensual}" min="0.01" step="0.01" /></td>
+                <td><p th:if="${#fields.hasErrors('precioMensual')}" th:errorclass="error" th:errors="*{precioMensual}" /></td>
+            </tr>
+            <tr>
+                <td><label th:text="#{publicacion.fecha}" /></td>
+                <td><input type="date" th:field="*{fechaPublicacion}" /></td>
+                <td><p th:if="${#fields.hasErrors('fechaPublicacion')}" th:errorclass="error" th:errors="*{fechaPublicacion}" /></td>
+            </tr>
+            <tr>
+                <td><label th:text="#{publicacion.estado}" /></td>
+                <td>
+                    <select th:field="*{estado}">
+                        <option th:each="e : ${allEstados}"
+                                th:value="${e}"
+                                th:text="${e}"></option>
+                    </select>
+                </td>
+                <td><p th:if="${#fields.hasErrors('estado')}" th:errorclass="error" th:errors="*{estado}" /></td>
+            </tr>
+            <tr>
+                <td><label th:text="#{publicacion.condiciones}" /></td>
+                <td><textarea th:field="*{condiciones}" rows="3" cols="40"></textarea></td>
+                <td><p th:if="${#fields.hasErrors('condiciones')}" th:errorclass="error" th:errors="*{condiciones}" /></td>
+            </tr>
+            <tr>
+                <td><label th:text="#{publicacion.descripcion}" /></td>
+                <td><textarea th:field="*{descripcion}" rows="4" cols="40"></textarea></td>
+                <td><p th:if="${#fields.hasErrors('descripcion')}" th:errorclass="error" th:errors="*{descripcion}" /></td>
+            </tr>
+        </table>
+
+        <table class="botones">
+            <tr>
+                <td><button type="submit" name="action" value="actionAceptar" th:text="#{botones.aceptar}"/></td>
+                <td><button type="submit" name="action" value="actionCancelar" th:text="#{botones.cancelar}"/></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+

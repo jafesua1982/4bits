@@ -27,4 +27,6 @@ public interface IPublicacionRepo extends JpaRepository<Publicacion, Long> {
                              @Param("estado") EstadoPublicacion estado, 
                              @Param("precioMin") BigDecimal precioMin, 
                              @Param("precioMax") BigDecimal precioMax);
+
+	boolean existsByPropiedadIdAndEstado(Long id, EstadoPublicacion activa);
 }

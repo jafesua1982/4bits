@@ -30,6 +30,12 @@ public class HistorialEstadoPublicacion {
 	}
 
 
+	public HistorialEstadoPublicacion(EstadoPublicacion estado, Publicacion publicacion) {
+	    this.estado = estado;
+	    this.publicacion = publicacion;
+	    this.fechaHora = LocalDateTime.now();
+	}
+
 	public Long getId() {
 		return id;
 	}
