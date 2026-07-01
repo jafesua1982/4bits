@@ -14,6 +14,15 @@ public class Publicacion {
 
 	@ManyToOne(optional = false)
 	private Propiedad propiedad;
+	
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<HistorialEstadoPublicacion> historialEstados = new java.util.ArrayList<>();
+
+    public void agregarHistorial(EstadoPublicacion nuevoEstado) {
+        HistorialEstadoPublicacion historial = new HistorialEstadoPublicacion(this, nuevoEstado);
+        this.historialEstados.add(historial);
+        this.estado = nuevoEstado;
+    }
 
 	@Column(precision = 12, scale = 2)
 	private BigDecimal precioMensual;
@@ -28,6 +37,8 @@ public class Publicacion {
 
 	@Enumerated(EnumType.STRING)
 	private EstadoPublicacion estado = EstadoPublicacion.ACTIVA;
+	
+	private boolean eliminada = false;
 
 
 	public Long getId() { 
@@ -38,6 +49,7 @@ public class Publicacion {
 		this.id = id; 
 	}
 
+	
 	public Propiedad getPropiedad() { 
 		return propiedad; 
 	}
@@ -85,4 +97,13 @@ public class Publicacion {
 	public void setEstado(EstadoPublicacion estado) { 
 		this.estado = estado; 
 	}
+	
+	public boolean isEliminada() {
+		return eliminada;
+	}
+	
+	public void setEliminada(boolean eliminada) {
+		this.eliminada = eliminada;
+	}
+
 }

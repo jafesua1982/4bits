@@ -4,12 +4,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import tuti.desi.tp.entidades.Propiedad;
 import tuti.desi.tp.entidades.enums.EstadoDisponibilidad;
 import tuti.desi.tp.entidades.enums.TipoPropiedad;
 
-@Repository
 public interface IPropiedadRepo extends JpaRepository<Propiedad, Long> {
 
 	boolean existsByDireccionIgnoreCaseAndCiudadId(String direccion, Long ciudadId);
